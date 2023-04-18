@@ -17,6 +17,11 @@ export const initMap = () => {
         metroData = await fetch("../../src/components/map/metro.msk.json")
             .then((data) => data.json())
             .then((metro) => metro);
+        map.on("load", () => {
+            metroData.forEach((metro) => {
+                getMetroLine(metro);
+            });
+        });
     };
     getMetroData();
 
@@ -173,10 +178,4 @@ export const initMap = () => {
             zoom: 15,
         });
     };
-
-    map.on("load", () => {
-        metroData.forEach((metro) => {
-            getMetroLine(metro);
-        });
-    });
 };
