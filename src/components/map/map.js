@@ -14,7 +14,7 @@ export const initMap = () => {
 
     let metroData = null;
     const getMetroData = async () => {
-        metroData = await fetch("../../src/components/map/metro.msk.json")
+        metroData = await fetch("./src/components/map/metro.msk.json")
             .then((data) => data.json())
             .then((metro) => metro);
         map.on("load", () => {
