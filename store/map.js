@@ -37,7 +37,7 @@ export default {
     },
     actions: {
         async getStations({ state }) {
-            state.stations = await fetch("../src/components/map/metro.msk.json")
+            state.stations = await fetch("assets/metro.msk.json")
                 .then((data) => data.json())
                 .then((metro) => {
                     state.metroBranches = metro;

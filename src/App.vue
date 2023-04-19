@@ -5,7 +5,7 @@
     </div>
 </template>
 <script>
-import MapBox from "@/components/map/MapBox.vue";
+import MapBox from "@/components/MapBox.vue";
 import ListStations from "@/components/ListStations.vue";
 export default {
     components: {
