@@ -1,56 +1,77 @@
 <template>
     <div class="list-stations">
-        <div>Heading</div>
-        <div>
-            <input v-model="searchString" placeholder="Поиск..." />
+        <div class="heading">Станции метро</div>
+        <div class="input-wrapper">
+            <search-input />
         </div>
-        <div :key="idx" v-for="(station, idx) in $store.state.stations">
-            <p>{{ station.name }}</p>
-        </div>
+        <station-item
+            :station="station"
+            class="link-wrapper"
+            :key="idx"
+            v-for="(station, idx) in $store.getters.searchedStations"
+            @get-coordinates="getCoordinates"
+            :class="{ 'active-link': activeLinkStation === station }"
+            @click.native="setActiveLinkAndShowModal(station)"
+        />
     </div>
 </template>
 
 <script>
+import SearchInput from "./SearchInput.vue";
+import StationItem from "./StationItem.vue";
 export default {
+    components: {
+        SearchInput,
+        StationItem,
+    },
     data() {
         return {
-            searchString: "",
+            activeLinkStation: null,
         };
     },
-    mounted() {
-        console.log(this.$store.state.count);
+    methods: {
+        getCoordinates(coordinates) {
+            this.$emit("get-coordinates", coordinates);
+        },
+        setActiveLinkAndShowModal(station) {
+            this.$emit("open-station-popup", station);
+            if (this.activeLinkStation === station) {
+                this.activeLinkStation = null;
+                return;
+            }
+            this.activeLinkStation = station;
+        },
     },
 };
 </script>
 <style>
+.input-wrapper {
+    padding: 10px 20px;
+}
+.active-link {
+    background: #f2f2f2;
+}
 .list-stations {
     position: absolute;
-    width: 550px;
     height: 50%;
     top: 50%;
-    left: -10%;
-    transform: translate(50%, -50%);
-    overflow: hidden;
-    border-right: 1px solid rgba(0, 0, 0, 0.25);
+    left: 20%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
     background: #fff;
+    min-width: 300px;
 }
 
 .link-wrapper {
     display: flex;
-}
-
-.circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: 10px;
+    padding: 10px 0;
 }
 
 .heading {
     background: #fff;
-    border-bottom: 1px solid #eee;
     line-height: 50px;
-    padding: 0 10px;
+    font-size: 20px;
+    padding: 10px 20px;
 }
 
 .listings {
@@ -88,8 +109,8 @@ export default {
 }
 
 ::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
+    width: 5px;
+    height: 5px;
     border-left: 0;
     background: rgba(0, 0, 0, 0.1);
 }
