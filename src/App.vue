@@ -16,6 +16,9 @@ export default {
     components: {
         MapBox,
     },
+    created() {
+        this.$store.dispatch("getStations");
+    },
 };
 </script>
 <style>

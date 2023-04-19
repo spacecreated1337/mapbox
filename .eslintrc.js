@@ -15,5 +15,6 @@ module.exports = {
                 printWidth: 120,
             },
         ],
+        quotes: "off",
     },
 };
