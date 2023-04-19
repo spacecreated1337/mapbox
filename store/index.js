@@ -4,33 +4,14 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        count: 0,
         stations: null,
         points: null,
-        map: null,
-    },
-    mutations: {
-        // renderData() {
-        //     this.map.addSource("stations", {
-        //         type: "geojson",
-        //         data: points,
-        //     });
-        //     map.addLayer({
-        //         id: "stations",
-        //         type: "circle",
-        //         source: "stations",
-        //         paint: {
-        //             "circle-color": `#fff`,
-        //             "circle-radius": 8,
-        //         },
-        //     });
-        // },
     },
     getters: {
-        filledPoints(state) {
+        filledPoints(state, getters) {
             return {
                 type: "FeatureCollection",
-                features: state.stations.map((station) => ({
+                features: getters.searchedStations.map((station) => ({
                     type: "Feature",
                     properties: {
                         id: `${station.name}`,
@@ -49,6 +30,9 @@ const store = new Vuex.Store({
                     },
                 })),
             };
+        },
+        searchedStations(state) {
+            return state.stations.filter((station) => station.name.includes("Новокосино"));
         },
     },
     actions: {
