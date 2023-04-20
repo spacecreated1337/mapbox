@@ -7,6 +7,7 @@ export default {
     data() {
         return {
             searchQuery: "",
+            debounce: null,
         };
     },
     methods: {
@@ -14,7 +15,10 @@ export default {
     },
     watch: {
         searchQuery(newValue) {
-            this.setSearchQuery(newValue);
+            clearTimeout(this.debounce);
+            this.debounce = setTimeout(() => {
+                this.setSearchQuery(newValue);
+            }, 300);
         },
     },
 };

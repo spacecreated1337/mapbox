@@ -4,6 +4,7 @@
 <script>
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
+import { mapMutations } from "vuex";
 export default {
     props: {
         coordinatesToFly: {
@@ -13,6 +14,7 @@ export default {
     },
     mounted() {
         this.initMap();
+        this.addEventHandlePoints();
     },
     data() {
         return {
@@ -21,6 +23,7 @@ export default {
         };
     },
     methods: {
+        ...mapMutations(["setActiveStation"]),
         initMap() {
             mapboxgl.accessToken = this.ACCESS_TOKEN;
             this.map = new mapboxgl.Map({
@@ -49,12 +52,6 @@ export default {
                 },
             });
 
-            this.map.on("click", "stations", (e) => {
-                const coordinates = e.features[0].geometry.coordinates.slice();
-                const description = e.features[0].properties.description;
-                new mapboxgl.Popup({ closeOnClick: false }).setLngLat(coordinates).setHTML(description).addTo(this.map);
-            });
-
             this.map.on("mouseenter", "stations", () => {
                 this.map.getCanvas().style.cursor = "pointer";
             });
@@ -63,37 +60,31 @@ export default {
             });
         },
         renderDataLines() {
-            this.$store.state.map.metroBranches.map((branch) => {
-                const coordinates = [];
-                branch.stations.forEach((station) => {
-                    coordinates.push([station.lng, station.lat]);
-                });
-                this.map.addSource(branch.name, {
-                    type: "geojson",
-                    data: {
-                        type: "Feature",
-                        properties: {
-                            "lines-color": `#${branch.hex_color}`,
-                        },
-                        geometry: {
-                            type: "LineString",
-                            coordinates,
-                        },
-                    },
-                });
-                this.map.addLayer({
-                    id: branch.name,
-                    type: "line",
-                    source: branch.name,
-                    layout: {
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": ["get", "lines-color"],
-                        "line-width": 4,
-                        "line-opacity": 1,
-                    },
+            this.map.addSource("lines", {
+                type: "geojson",
+                data: this.$store.getters.filledLines,
+            });
+            this.map.addLayer({
+                id: "lines",
+                type: "line",
+                source: "lines",
+                layout: {
+                    "line-join": "round",
+                    "line-cap": "round",
+                },
+                paint: {
+                    "line-color": ["get", "line-color"],
+                    "line-width": 4,
+                    "line-opacity": 1,
+                },
+            });
+        },
+        addEventHandlePoints() {
+            this.map.on("click", "stations", (e) => {
+                this.setActiveStation(null);
+                this.$nextTick().then(() => {
+                    const stationProperty = this.map.queryRenderedFeatures(e.point)[0].properties;
+                    this.setActiveStation(stationProperty);
                 });
             });
         },
