@@ -3,7 +3,7 @@
         <div class="off-canvas" v-if="stationData">
             <div class="content-wrapper">
                 <div @click="closeOffCanvas" class="close">
-                    <img src="assets/icons/close.svg" alt="" />
+                    <img src="assets/close.svg" alt="" />
                 </div>
                 <h3>{{ stationData.name }}</h3>
                 <p>{{ stationData.district }}</p>
