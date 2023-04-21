@@ -92,13 +92,11 @@ export default {
     watch: {
         "$store.state.map.searchQuery"(newValue) {
             this.map.getSource("stations").setData(this.$store.getters.filledPoints);
-            this.$store.state.map.metroBranches.forEach((branch) => {
-                if (newValue === "") {
-                    this.map.setPaintProperty(branch.name, "line-opacity", 1);
-                    return;
-                }
-                this.map.setPaintProperty(branch.name, "line-opacity", 0.3);
-            });
+            if (newValue === "") {
+                this.map.setPaintProperty("lines", "line-opacity", 1);
+                return;
+            }
+            this.map.setPaintProperty("lines", "line-opacity", 0.3);
         },
         coordinatesToFly() {
             this.map.flyTo({
